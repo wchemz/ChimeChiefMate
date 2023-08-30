@@ -8,6 +8,7 @@
 // @grant        GM_xmlhttpRequest
 // @updateURL    https://github.com/wchemz/ChimeChiefMate/raw/main/scripts/ChimeMeetingCC.user.js
 // @downloadURL  https://github.com/wchemz/ChimeChiefMate/raw/main/scripts/ChimeMeetingCC.user.js
+// @connect      https://6upnfpnrt8.execute-api.us-east-1.amazonaws.com
 // ==/UserScript==
 
 (function () {
