@@ -6,8 +6,8 @@
 // @author       Wei Che <wchemz@amazon.com>
 // @match        https://app.chime.aws/meetings/*
 // @grant        GM_xmlhttpRequest
-// @updateURL    https://github.com/wchemz/ChimeChiefMate/blob/main/scripts/ChimeMeetingCC.user.js
-// @downloadURL  https://github.com/wchemz/ChimeChiefMate/blob/main/scripts/ChimeMeetingCC.user.js
+// @updateURL    https://github.com/wchemz/ChimeChiefMate/raw/main/scripts/ChimeMeetingCC.user.js
+// @downloadURL  https://github.com/wchemz/ChimeChiefMate/raw/main/scripts/ChimeMeetingCC.user.js
 // ==/UserScript==
 
 (function () {
