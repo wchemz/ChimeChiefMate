@@ -99,31 +99,24 @@
         if (buttonWithAriaLabel) {
             const chimeCCTextElement = buttonWithAriaLabel.closest('div').previousElementSibling;
             if (chimeCCTextElement) {
-                let currentIndex = 0;
-                let currentElement = chimeCCTextElement.firstElementChild;
+                let currentElement = chimeCCTextElement.lastElementChild.previousElementSibling.previousElementSibling;
                 const appendedArray = [];
-
-                while (currentElement) {
-                    if (currentIndex % 2 === 0) {
-                        const appendedContent = currentElement.nextElementSibling ? currentElement.nextElementSibling.innerText : '';
-                        if (currentElement.innerText == "Amazon Chime") {
-                            currentElement = currentElement.nextElementSibling;
-                            currentIndex++;
-                            continue;
-                        }
-                        const caption = currentElement.innerText + ": " + appendedContent;
-
-                        // Check if the caption is not already in the array before appending
-                        if (!chimeCCTextArray.includes(caption)) {
-                            appendedArray.push(caption);
-                        }
+                if (currentElement) {
+                    const speaker = currentElement.previousElementSibling;
+                    if (speaker.innerText != "Amazon Chime") {
+                        const caption = speaker.innerText + ": " + currentElement.innerText;
+                        appendedArray.push(caption);
                     }
-                    currentElement = currentElement.nextElementSibling;
-                    currentIndex++;
                 }
-
                 // Append new content to the existing array
-                chimeCCTextArray.push(...appendedArray);
+                if (
+                    chimeCCTextArray.length === 0 ||
+                    chimeCCTextArray[chimeCCTextArray.length - 1] !== appendedArray[appendedArray.length - 1]
+                ) {
+                    // Append new content to the existing array
+                    chimeCCTextArray.push(...appendedArray);
+                    console.log(chimeCCTextArray);
+                }
             }
         }
     }
@@ -140,6 +133,32 @@
         console.debug("Starting saving");
         const currentTimeFormatted = getCurrentTimeFormatted();
         const fileName = `${meetingId}_${currentTimeFormatted}.txt`;
+
+        //get the last line:
+        const buttonWithAriaLabel = document.querySelector('[aria-label="Caption settings"]');
+        if (buttonWithAriaLabel) {
+            const chimeCCTextElement = buttonWithAriaLabel.closest('div').previousElementSibling;
+            if (chimeCCTextElement) {
+                let currentElement = chimeCCTextElement.lastElementChild;
+                const appendedArray = [];
+                if (currentElement) {
+                    const speaker = currentElement.previousElementSibling;
+                    if (speaker.innerText != "Amazon Chime") {
+                        const caption = speaker.innerText + ": " + currentElement.innerText;
+                        appendedArray.push(caption);
+                    }
+                }
+                // Append new content to the existing array
+                if (
+                    chimeCCTextArray.length === 0 ||
+                    chimeCCTextArray[chimeCCTextArray.length - 1] !== appendedArray[appendedArray.length - 1]
+                ) {
+                    // Append new content to the existing array
+                    chimeCCTextArray.push(...appendedArray);
+                    console.log(chimeCCTextArray);
+                }
+            }
+        }
 
         // Join the array elements with a line break
         const contentWithLineBreaks = chimeCCTextArray.join('\n');
