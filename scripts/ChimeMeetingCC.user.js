@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Chime Chief Mate
 // @namespace    wchemz
-// @version      1.0.0
+// @version      1.1.0
 // @description  Save Chime CC to disk, this script is going to enable machine generated caption by default
 // @author       Wei Che <wchemz@amazon.com>
 // @match        https://app.chime.aws/meetings/*
