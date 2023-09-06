@@ -16,7 +16,7 @@ Follow these simple steps to set up and use Chime Chief Mate:
    Ensure you have the Tampermonkey extension installed in your browser. If you are using Chrome, you can get it from the [Chrome Web Store](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo?hl=en). For other browsers, please download the appropriate version of Tampermonkey.
 
 2. **Install Chime Chief Mate UserScript**:
-   Navigate to the installation URL: [ChimeMeetingCC.user.js](https://github.com/wchemz/Chime Chief Mate/raw/main/scripts/ChimeMeetingCC.user.js). Tampermonkey will detect the script and prompt you to install it. Confirm the installation.
+   Navigate to the installation URL: [ChimeMeetingCC.user.js](https://github.com/wchemz/ChimeChiefMate/raw/main/scripts/ChimeMeetingCC.user.js). Tampermonkey will detect the script and prompt you to install it. Confirm the installation.
 
 3. **Configure Your Role**:
    Open the installed Chime Chief Mate UserScript. Locate the line of code that defines your role and update it as follows:
@@ -28,6 +28,8 @@ Chime Chief Mate currently supports four roles: AM, SA, DM, and TAM. Stay tuned 
 
 4. **Start Enhancing Your Meetings**:
    - Join an Amazon Chime meeting that is generating machine-generated captions.
+   - Enable "Machine generated captions" from Chime Setting page
+   ![Chime Setting](img/ChimeSettings.png)
    - During the meeting, click the newly added "Save Chat & Captions" &#x1F4BE; button on the Amazon Chime interface.
    - The UserScript will generate a text file containing the captions and prompt you to save it to your local disk.
 
