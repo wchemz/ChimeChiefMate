@@ -41,6 +41,7 @@
         }
     }, 2000);
 
+
     function addSaveButtonToMenu() {
         const meetingTop = document.querySelector(querySelectorPathMainArea)
         if (!meetingTop) {
@@ -261,7 +262,15 @@
         }
     }
 
+    function saveMeetingOnClose() {
+        console.log("Saving meeting on close.");
+        //When the window is closed, save the meeting notes
+        addEventListener('beforeunload', saveChimeCCTextArray);
+    }
+
     setupMutationObserver(); // Start the setup on script load
     checkAndClickCCButton();
+    saveMeetingOnClose();
+
 
 })();
