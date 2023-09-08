@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Chime Chief Mate
 // @namespace    wchemz
-// @version      1.1.1
+// @version      1.1.2
 // @description  Save Chime CC to disk, this script is going to enable machine generated caption by default
 // @author       Wei Che <wchemz@amazon.com>
 // @match        https://app.chime.aws/meetings/*
@@ -19,6 +19,7 @@
         DM: 'DM',
         TAM: 'TAM'
     };
+
     //Update this to get your relative action items
     const roleName = RoleEnum.AM;
 
@@ -61,19 +62,16 @@
 
     async function setupMutationObserver() {
         console.log("Setting up MutationObserver...");
-
-        const buttonWithAriaLabel = await waitForElement('button[aria-label="Caption settings"]');
+        const buttonWithAriaLabel = document.querySelector('button[aria-label="Caption settings"]');
 
         if (buttonWithAriaLabel) {
             console.log("Button with Aria Label found. Setting up observer.");
             const ccDiv = buttonWithAriaLabel.closest('div').previousElementSibling;
             const observer = new MutationObserver(function (mutationsList) {
-                console.log("Mutation observer callback triggered.");
-                for (const mutation of mutationsList) {
-                    if (mutation.type === 'childList') {
-                        console.log("Mutation detected. Updating Chime CC Text Array...");
-                        updateChimeCCTextArray();
-                    }
+                const lastMutation = mutationsList[mutationsList.length - 1]; // Get the last mutation
+                if (lastMutation && lastMutation.type === 'childList') {
+                    console.log("New caption detected. Updating Chime CC Text Array...");
+                    updateChimeCCTextArray();
                 }
             });
             observer.observe(ccDiv, { childList: true });
@@ -96,7 +94,7 @@
     }
 
     function updateChimeCCTextArray() {
-        const buttonWithAriaLabel = document.querySelector('[aria-label="Caption settings"]');
+        const buttonWithAriaLabel = document.querySelector('button[aria-label="Caption settings"]');
         if (buttonWithAriaLabel) {
             const chimeCCTextElement = buttonWithAriaLabel.closest('div').previousElementSibling;
             if (chimeCCTextElement) {
@@ -233,7 +231,7 @@
 
 
         // RESTful URL
-        var url = "https://6upnfpnrt8.execute-api.us-east-1.amazonaws.com/dev/genai";
+        const url = "https://6upnfpnrt8.execute-api.us-east-1.amazonaws.com/dev/genai";
 
         // Send POST request
         GM.xmlHttpRequest({
@@ -283,6 +281,5 @@
     setupMutationObserver(); // Start the setup on script load
     checkAndClickCCButton();
     saveMeetingOnClose();
-
 
 })();
