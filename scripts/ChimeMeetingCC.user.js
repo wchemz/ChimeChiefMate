@@ -62,7 +62,7 @@
     async function setupMutationObserver() {
         console.log("Setting up MutationObserver...");
 
-        const buttonWithAriaLabel = await waitForElement('[aria-label="Caption settings"]');
+        const buttonWithAriaLabel = await waitForElement('button[aria-label="Caption settings"]');
 
         if (buttonWithAriaLabel) {
             console.log("Button with Aria Label found. Setting up observer.");
@@ -125,7 +125,7 @@
     function saveChimeCCTextArray() {
         const h2Element = document.querySelector('h2[data-test-id="meetingTitle"]');
         if (h2Element) {
-            const meetingTitle = h2Element.textContent + " - Machine generated captions";
+            const meetingTitle = h2Element.textContent + " ";
             meetingId = prompt("Save machine generated captions for: ", meetingTitle);
         }
         if (null === meetingId) {
@@ -185,6 +185,16 @@
     }
 
     function genAi(contentWithLineBreaks) {
+        if (null === meetingId) {
+            const h2Element = document.querySelector('h2[data-test-id="meetingTitle"]');
+            if (h2Element) {
+                const meetingTitle = h2Element.textContent + " ";
+                meetingId = prompt("Save machine generated captions for: ", meetingTitle);
+            }
+            if (null === meetingId) {
+                meetingId = document.title;
+            }
+        }
         let genAiRequest;
         const currentOrigin = window.location.origin;
         if (currentOrigin === "https://app.chime.aws") {
@@ -207,8 +217,10 @@
                         "fullName": `${fullName}`,
                         "meetingNote": `${contentWithLineBreaks}`,
                         "roleName": `${roleName}`,
-                        "prompt": ""
+                        "prompt": "",
+                        "meetingId": `${meetingId}`,
                     };
+                    console.log(genAiRequest);
                 } catch (error) {
                     console.error("Error parsing AmazonChimeExpressSession:", error);
                 }
