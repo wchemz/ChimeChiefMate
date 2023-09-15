@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         Chime Chief Mate 1.1.3
+// @name         Chime Chief Mate
 // @namespace    wchemz
 // @version      1.1.3
 // @description  Save Chime CC to disk, this script is going to enable machine generated caption by default
