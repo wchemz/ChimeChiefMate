@@ -1,9 +1,9 @@
 // ==UserScript==
-// @name         Chime Chief Mate
+// @name         Chime Chief Mate 1.1.3
 // @namespace    wchemz
-// @version      1.1.2
+// @version      1.1.3
 // @description  Save Chime CC to disk, this script is going to enable machine generated caption by default
-// @author       Wei Che <wchemz@amazon.com>
+// @author       Wei Chenn <wchemz@amazon.com>
 // @match        https://app.chime.aws/meetings/*
 // @grant        GM_xmlhttpRequest
 // @updateURL    https://github.com/wchemz/ChimeChiefMate/raw/main/scripts/ChimeMeetingCC.user.js
@@ -14,14 +14,17 @@
 (function () {
     "use strict";
     const RoleEnum = {
+        NA: 'NA',
         SA: 'SA',
         AM: 'AM',
         DM: 'DM',
-        TAM: 'TAM'
+        TAM: 'TAM',
+        HR: 'HR',
+        SUPPORT: 'SUPPORT'
     };
 
     //Update this to get your relative action items
-    const roleName = RoleEnum.AM;
+    const roleName = RoleEnum.NA;
 
     //offlineMode: false ? (save to disk && invoke api) : (save to disk only)
     const offlineMode = false;
@@ -60,6 +63,25 @@
 
     var chimeCCTextArray = []; // Initialize the array
 
+    // Function to load data from session storage
+    function loadFromSessionStorage() {
+        var storedData = sessionStorage.getItem('chimeCCTextArray');
+        if (storedData) {
+            chimeCCTextArray = JSON.parse(storedData);
+        }
+    }
+
+    // Function to save data to session storage
+    function saveToSessionStorage() {
+        sessionStorage.setItem('chimeCCTextArray', JSON.stringify(chimeCCTextArray));
+    }
+
+    // Load data from session storage on page load
+    window.addEventListener('load', function() {
+        loadFromSessionStorage();
+        console.log('Loaded from session storage:', chimeCCTextArray);
+    });
+
     async function setupMutationObserver() {
         console.log("Setting up MutationObserver...");
         const buttonWithAriaLabel = document.querySelector('button[aria-label="Caption settings"]');
@@ -67,14 +89,38 @@
         if (buttonWithAriaLabel) {
             console.log("Button with Aria Label found. Setting up observer.");
             const ccDiv = buttonWithAriaLabel.closest('div').previousElementSibling;
+            const config = { attributes: true, childList: true, subtree: true };
+            /*
             const observer = new MutationObserver(function (mutationsList) {
-                const lastMutation = mutationsList[mutationsList.length - 1]; // Get the last mutation
+            const lastMutation = mutationsList[mutationsList.length - 1]; // Get the last mutation
                 if (lastMutation && lastMutation.type === 'childList') {
                     console.log("New caption detected. Updating Chime CC Text Array...");
                     updateChimeCCTextArray();
                 }
-            });
-            observer.observe(ccDiv, { childList: true });
+                else{
+                    console.log("lastMutation.type: " + lastMutation.type);
+                }
+               for (mutationsList){
+                   console.log("lastMutation.type: " + lastMutation.type);
+               }
+            });*/
+
+            // Callback function to execute when mutations are observed
+            const callback = (mutationList, observer) => {
+                for (const mutation of mutationList) {
+                    if (mutation.type === "childList") {
+                        setTimeout(updateChimeCCTextArray, 2000);
+                        console.log("New caption detected. Updating Chime CC Text Array...");
+
+                    } else {
+                         console.log(mutation);
+                    }
+                }
+            };
+
+            // Create an observer instance linked to the callback function
+            const observer = new MutationObserver(callback);
+            observer.observe(ccDiv, config);
         } else {
             console.log("Button with Aria Label not found. Retrying after 2s.");
             setTimeout(setupMutationObserver, 2000); // Retry after 2s if not found
@@ -116,6 +162,7 @@
                     chimeCCTextArray.push(...appendedArray);
                     console.log(chimeCCTextArray);
                 }
+                saveToSessionStorage();
             }
         }
     }
@@ -262,16 +309,6 @@
             .replace(/:\d+ /, ' '); // Removes seconds and space
     }
 
-    function checkAndClickCCButton() {
-        const buttonSelector = 'button[aria-label="Turn on machine generated captions"]';
-        const buttonElement = document.querySelector(buttonSelector);
-
-        if (buttonElement && buttonElement.getAttribute('aria-pressed') === 'false') {
-            buttonElement.click();
-            console.log("Button clicked.");
-        }
-    }
-
     function saveMeetingOnClose() {
         console.log("Saving meeting on close.");
         //When the window is closed, save the meeting notes
@@ -279,7 +316,5 @@
     }
 
     setupMutationObserver(); // Start the setup on script load
-    checkAndClickCCButton();
-    saveMeetingOnClose();
 
 })();
