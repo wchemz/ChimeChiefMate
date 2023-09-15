@@ -3,7 +3,7 @@
 // @namespace    wchemz
 // @version      1.1.3
 // @description  Save Chime CC to disk, this script is going to enable machine generated caption by default
-// @author       Wei Chenn <wchemz@amazon.com>
+// @author       Wei Chen <wchemz@amazon.com>
 // @match        https://app.chime.aws/meetings/*
 // @grant        GM_xmlhttpRequest
 // @updateURL    https://github.com/wchemz/ChimeChiefMate/raw/main/scripts/ChimeMeetingCC.user.js
