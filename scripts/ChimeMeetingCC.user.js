@@ -52,12 +52,78 @@
             return;
         }
 
-        var saveButton = document.createElement("div");
-        saveButton.title = "Save Captions to disk";
-        saveButton.style.cssText = "margin: 12px 0 0 16px; cursor:pointer; line-height:24px;";
-        saveButton.className = querySelectorPathButton;
-        saveButton.innerHTML = "&#x1F4BE;";
-        saveButton.addEventListener("click", saveChimeCCTextArray);
+        // Create the outer div element with class and data-test-id attributes
+        const outerDiv = document.createElement('div');
+        outerDiv.classList.add('F0UA3OGcJZIObDPdj9chR', 'ch-control-bar-btn-wrapper');
+        outerDiv.setAttribute('data-test-id', 'SaveMeetingCaption');
+
+        // Create the inner div element with class "_1CHilVkFW64baA86DEITpB"
+        const innerDiv = document.createElement('div');
+        innerDiv.classList.add('_1CHilVkFW64baA86DEITpB');
+
+        // Create the span element with class "_1ujIO6VidjhA0Jx5NJDi64"
+        const spanElement = document.createElement('span');
+        spanElement.classList.add('_1ujIO6VidjhA0Jx5NJDi64');
+
+        // Create the button element with classes, attributes, and id
+        const buttonElement = document.createElement('button');
+        buttonElement.classList.add('outlook__button', 'outlook__button--default', '_3Qdm7kDcXZkFyvRiDHxI7m', '_6r72YEzgxJnG7jGGxa74i', '_3XyrA5QGUz0NqaFXFsRq8d');
+        buttonElement.setAttribute('data-testid', 'button');
+        buttonElement.setAttribute('aria-label', 'Save Meeting Caption');
+        buttonElement.setAttribute('type', 'button');
+        buttonElement.setAttribute('id', 'saveMeetingCaption');
+        buttonElement.addEventListener("click", saveChimeCCTextArray);
+
+        // Create the span element with class "ch-icon _2xCR-KH821nE_g8TcMukUv _1ujIO6VidjhA0Jx5NJDi64"
+        const iconSpan = document.createElement('span');
+        iconSpan.classList.add('ch-icon', '_2xCR-KH821nE_g8TcMukUv', '_1ujIO6VidjhA0Jx5NJDi64');
+
+        // Create the SVG element
+        const svgElement = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        svgElement.classList.add('Svg');
+        svgElement.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+        svgElement.setAttribute('viewBox', '0 0 24 24');
+        svgElement.setAttribute('data-testid', 'save-meeting-caption');
+        svgElement.setAttribute('style', 'color: rgb(255, 255, 255)');
+
+        // Create the path element within the SVG
+        const pathElement = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        pathElement.setAttribute('fill-rule', 'evenodd');
+        pathElement.setAttribute('d', 'M4,2 L18.4222294,2 L22,5.67676491 L22,20 C22,21.1045695 21.1045695,22 20,22 L4,22 C2.8954305,22 2,21.1045695 2,20 L2,4 C2,2.8954305 2.8954305,2 4,2 Z M17,4 L17,10 L7,10 L7,4 L4,4 L4,20 L6,20 L6,12 L18,12 L18,20 L20,20 L20,6.48925072 L17.5777706,4 L17,4 Z M9,4 L9,8 L15,8 L15,4 L9,4 Z M8,14 L8,20 L16,20 L16,14 L8,14 Z M12,5 L14,5 L14,7 L12,7 L12,5 Z');
+
+        // Append the path element to the SVG element
+        svgElement.appendChild(pathElement);
+
+        // Append the SVG element to the icon span
+        iconSpan.appendChild(svgElement);
+
+        // Create the span element with class "ch-label"
+        const labelSpan = document.createElement('span');
+        labelSpan.classList.add('ch-label');
+        labelSpan.setAttribute('data-testid', 'button-label');
+        labelSpan.textContent = 'Save Meeting Caption';
+
+        // Append the icon span and label span to the button element
+        buttonElement.appendChild(iconSpan);
+        buttonElement.appendChild(labelSpan);
+
+        // Append the button element to the span element
+        spanElement.appendChild(buttonElement);
+
+        // Create the label element with class "_3KU8weQbtLiFvPUQLzBJCu" and "for" attribute
+        const labelElement = document.createElement('label');
+        labelElement.classList.add('_3KU8weQbtLiFvPUQLzBJCu');
+        labelElement.setAttribute('for', 'saveMeetingCaption');
+        labelElement.textContent = 'Save';
+
+        // Append the inner div and label element to the outer div
+        innerDiv.appendChild(spanElement);
+        outerDiv.appendChild(innerDiv);
+        outerDiv.appendChild(labelElement);
+
+        // Assign the resulting structure to the variable saveButton
+        let saveButton = outerDiv;
+
         meetingTop.appendChild(saveButton);
     }
 
@@ -99,7 +165,6 @@
                 }
             }
             else if (mutation.type === 'characterData') {
-                console.log('characterData');
                 const oldValue = mutation.oldValue;
                 const newValue = mutation.target.textContent;
                 const startIndex = Math.max(0, chimeCCTextArray.length - 50);
