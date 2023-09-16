@@ -21,10 +21,10 @@ Follow these simple steps to set up and use Chime Chief Mate:
 3. **Configure Your Role**:
    Open the installed Chime Chief Mate UserScript. Locate the line of code that defines your role and update it as follows:
 ```
-   const roleName = RoleEnum.AM; // Change "AM" to your role (AM, SA, DM, TAM)
+   const roleName = RoleEnum.NA; // Change "NA" to your role (AM, SA, DM, TAM, HR and SUPPORT)
 ```
 
-Chime Chief Mate currently supports four roles: AM, SA, DM, and TAM. Stay tuned for additional roles in future releases.
+Chime Chief Mate currently supports four roles: AM, SA, DM, TAM, HR and SUPPORT. Stay tuned for additional roles in future releases.
 
 4. **Start Enhancing Your Meetings**:
    - Join an Amazon Chime meeting that is generating machine-generated captions.
