@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Chime Chief Mate
 // @namespace    wchemz
-// @version      1.1.3
+// @version      2.0.0
 // @description  Save Chime CC to disk, this script is going to enable machine generated caption by default
 // @author       Wei Chen <wchemz@amazon.com>
 // @match        https://app.chime.aws/meetings/*
@@ -77,93 +77,59 @@
     }
 
     // Load data from session storage on page load
-    window.addEventListener('load', function() {
+    window.addEventListener('load', function () {
         loadFromSessionStorage();
         console.log('Loaded from session storage:', chimeCCTextArray);
     });
 
-    async function setupMutationObserver() {
-        console.log("Setting up MutationObserver...");
-        const buttonWithAriaLabel = document.querySelector('button[aria-label="Caption settings"]');
-
-        if (buttonWithAriaLabel) {
-            console.log("Button with Aria Label found. Setting up observer.");
-            const ccDiv = buttonWithAriaLabel.closest('div').previousElementSibling;
-            const config = { attributes: true, childList: true, subtree: true };
-            /*
-            const observer = new MutationObserver(function (mutationsList) {
-            const lastMutation = mutationsList[mutationsList.length - 1]; // Get the last mutation
-                if (lastMutation && lastMutation.type === 'childList') {
-                    console.log("New caption detected. Updating Chime CC Text Array...");
-                    updateChimeCCTextArray();
+    function mutationCallback(mutations) {
+        console.log('mutationCallback');
+        for (let mutation of mutations) {
+            if (mutation.type === 'childList') {
+                if (mutation.addedNodes.length > 0) {
+                    mutation.addedNodes.forEach(node => {
+                        if (node.tagName === 'DIV') {
+                            //speaker
+                            chimeCCTextArray.push(node.textContent + ": ");
+                        } else if (node.tagName === 'P') {
+                            //content
+                            chimeCCTextArray.push(node.textContent);
+                        }
+                    });
                 }
-                else{
-                    console.log("lastMutation.type: " + lastMutation.type);
-                }
-               for (mutationsList){
-                   console.log("lastMutation.type: " + lastMutation.type);
-               }
-            });*/
-
-            // Callback function to execute when mutations are observed
-            const callback = (mutationList, observer) => {
-                for (const mutation of mutationList) {
-                    if (mutation.type === "childList") {
-                        setTimeout(updateChimeCCTextArray, 2000);
-                        console.log("New caption detected. Updating Chime CC Text Array...");
-
-                    } else {
-                         console.log(mutation);
+            }
+            else if (mutation.type === 'characterData') {
+                console.log('characterData');
+                const oldValue = mutation.oldValue;
+                const newValue = mutation.target.textContent;
+                const startIndex = Math.max(0, chimeCCTextArray.length - 50);
+                for (let i = chimeCCTextArray.length - 1; i >= startIndex; i--) {
+                    if (chimeCCTextArray[i] === oldValue) {
+                        chimeCCTextArray[i] = newValue;
                     }
                 }
-            };
-
-            // Create an observer instance linked to the callback function
-            const observer = new MutationObserver(callback);
-            observer.observe(ccDiv, config);
-        } else {
-            console.log("Button with Aria Label not found. Retrying after 2s.");
-            setTimeout(setupMutationObserver, 2000); // Retry after 2s if not found
+            }
+            saveToSessionStorage();
         }
     }
 
-    async function waitForElement(selector) {
-        return new Promise((resolve) => {
-            const interval = setInterval(() => {
-                const element = document.querySelector(selector);
-                if (element) {
-                    clearInterval(interval);
-                    resolve(element);
-                }
-            }, 100);
-        });
-    }
-
-    function updateChimeCCTextArray() {
-        const buttonWithAriaLabel = document.querySelector('button[aria-label="Caption settings"]');
-        if (buttonWithAriaLabel) {
-            const chimeCCTextElement = buttonWithAriaLabel.closest('div').previousElementSibling;
-            if (chimeCCTextElement) {
-                let currentElement = chimeCCTextElement.lastElementChild.previousElementSibling.previousElementSibling;
-                const appendedArray = [];
-                if (currentElement) {
-                    const speaker = currentElement.previousElementSibling;
-                    if (speaker.innerText != "Amazon Chime") {
-                        const caption = speaker.innerText + ": " + currentElement.innerText;
-                        appendedArray.push(caption);
-                    }
-                }
-                // Append new content to the existing array
-                if (
-                    chimeCCTextArray.length === 0 ||
-                    chimeCCTextArray[chimeCCTextArray.length - 1] !== appendedArray[appendedArray.length - 1]
-                ) {
-                    // Append new content to the existing array
-                    chimeCCTextArray.push(...appendedArray);
-                    console.log(chimeCCTextArray);
-                }
-                saveToSessionStorage();
+    function setupMutationObserver() {
+        console.log("Setting up MutationObserver...");
+        const ccDivElementWrapper = document.querySelector('div[style="color: rgb(255, 255, 255); font-size: 16px;"]');
+        if (ccDivElementWrapper) {
+            console.log("ccDivElementWrapper found. Setting up observer.");
+            let ccDivElement = ccDivElementWrapper.firstElementChild;
+            const config = {
+                childList: true,
+                subtree: true,
+                characterData: true,
+                characterDataOldValue: true
             }
+            let observer = new MutationObserver(mutationCallback);
+            observer.observe(ccDivElement, config);
+        } else {
+            console.log("ccDivElement not found. Retrying after 2s.");
+            setTimeout(setupMutationObserver, 2000); // Retry after 2s if not found
         }
     }
 
@@ -179,33 +145,6 @@
         console.debug("Starting saving");
         const currentTimeFormatted = getCurrentTimeFormatted();
         const fileName = `${meetingId}_${currentTimeFormatted}.txt`;
-
-        //get the last line:
-        const buttonWithAriaLabel = document.querySelector('[aria-label="Caption settings"]');
-        if (buttonWithAriaLabel) {
-            const chimeCCTextElement = buttonWithAriaLabel.closest('div').previousElementSibling;
-            if (chimeCCTextElement) {
-                let currentElement = chimeCCTextElement.lastElementChild;
-                const appendedArray = [];
-                if (currentElement) {
-                    const speaker = currentElement.previousElementSibling;
-                    if (speaker.innerText != "Amazon Chime") {
-                        const caption = speaker.innerText + ": " + currentElement.innerText;
-                        appendedArray.push(caption);
-                    }
-                }
-                // Append new content to the existing array
-                if (
-                    chimeCCTextArray.length === 0 ||
-                    chimeCCTextArray[chimeCCTextArray.length - 1] !== appendedArray[appendedArray.length - 1]
-                ) {
-                    // Append new content to the existing array
-                    chimeCCTextArray.push(...appendedArray);
-                    console.log(chimeCCTextArray);
-                }
-            }
-        }
-
         // Join the array elements with a line break
         const contentWithLineBreaks = chimeCCTextArray.join('\n');
         if (!offlineMode) {
