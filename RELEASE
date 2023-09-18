@@ -1,4 +1,8 @@
+2.0.1
+- Update saved text file structure
+
 2.0.0
 - Refreshed GUI with SVG implementation for the save button
 - Implemented session store for preserving temporary caption data
 - Enhanced caption update process logic
+

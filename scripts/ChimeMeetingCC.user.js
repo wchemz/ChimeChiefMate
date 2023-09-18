@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Chime Chief Mate
 // @namespace    wchemz
-// @version      2.0.0
+// @version      2.0.1
 // @description  Save Chime CC to disk, this script is going to enable machine generated caption by default
 // @author       Wei Chen <wchemz@amazon.com>
 // @match        https://app.chime.aws/meetings/*
@@ -210,8 +210,16 @@
         console.debug("Starting saving");
         const currentTimeFormatted = getCurrentTimeFormatted();
         const fileName = `${meetingId}_${currentTimeFormatted}.txt`;
-        // Join the array elements with a line break
-        const contentWithLineBreaks = chimeCCTextArray.join('\n');
+
+        let contentWithLineBreaks = '';
+        for (let i = 0; i < chimeCCTextArray.length; i++) {
+            if (i % 2 != 0) {
+                contentWithLineBreaks += chimeCCTextArray[i] + '\n';
+            } else {
+                contentWithLineBreaks += chimeCCTextArray[i];
+            }
+        }
+        contentWithLineBreaks = contentWithLineBreaks.slice(0, -1);
         if (!offlineMode) {
             genAi(contentWithLineBreaks);
         }
