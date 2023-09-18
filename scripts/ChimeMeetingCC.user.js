@@ -220,10 +220,10 @@
             }
         }
         contentWithLineBreaks = contentWithLineBreaks.slice(0, -1);
+        saveAs(meetingId + "_" + currentTimeFormatted + ".txt", contentWithLineBreaks);
         if (!offlineMode) {
             genAi(contentWithLineBreaks);
         }
-        saveAs(meetingId + "_" + currentTimeFormatted + ".txt", contentWithLineBreaks);
     }
 
     function saveAs(filename, contents) {
