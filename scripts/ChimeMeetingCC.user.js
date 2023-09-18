@@ -131,7 +131,10 @@
 
     // Function to load data from session storage
     function loadFromSessionStorage() {
-        var storedData = sessionStorage.getItem('chimeCCTextArray');
+        const tabUrl = window.location.href;
+        const meetingNumber = tabUrl.substring(tabUrl.lastIndexOf('/') + 1);
+        const storageKey = meetingNumber + '-chimeCCTextArray';
+        var storedData = sessionStorage.getItem(storageKey);
         if (storedData) {
             chimeCCTextArray = JSON.parse(storedData);
         }
@@ -139,7 +142,10 @@
 
     // Function to save data to session storage
     function saveToSessionStorage() {
-        sessionStorage.setItem('chimeCCTextArray', JSON.stringify(chimeCCTextArray));
+        const tabUrl = window.location.href;
+        const meetingNumber = tabUrl.substring(tabUrl.lastIndexOf('/') + 1);
+        const storageKey = meetingNumber + '-chimeCCTextArray';
+        sessionStorage.setItem(storageKey, JSON.stringify(chimeCCTextArray));
     }
 
     // Load data from session storage on page load
