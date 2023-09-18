@@ -30,7 +30,7 @@ Chime Chief Mate currently supports four roles: AM, SA, DM, TAM, HR and SUPPORT.
    - Join an Amazon Chime meeting that is generating machine-generated captions.
    - Enable "Machine generated captions" from Chime Setting page
    ![Chime Setting](img/ChimeSettings.png)
-   - During the meeting, click the newly added "Save Chat & Captions" ![Save Chat & Captions](img/Save.png) button on the Amazon Chime interface.
+   - During the meeting, click the newly added "Save Chat & Captions" &#x1F4BE; button on the Amazon Chime interface.
    - The UserScript will generate a text file containing the captions and prompt you to save it to your local disk.
 
 ## Get Meeting Summaries and Action Items
