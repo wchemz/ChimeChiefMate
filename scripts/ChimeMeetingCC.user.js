@@ -152,17 +152,15 @@
         console.log('mutationCallback');
         for (let mutation of mutations) {
             if (mutation.type === 'childList') {
-                if (mutation.addedNodes.length > 0) {
-                    mutation.addedNodes.forEach(node => {
-                        if (node.tagName === 'DIV') {
-                            //speaker
-                            chimeCCTextArray.push(node.textContent + ": ");
-                        } else if (node.tagName === 'P') {
-                            //content
-                            chimeCCTextArray.push(node.textContent);
-                        }
-                    });
-                }
+                mutation.addedNodes.forEach(node => {
+                    if (node.tagName === 'DIV' && node.textContent !== null && node.textContent !== undefined) {
+                        //speaker
+                        chimeCCTextArray.push(node.textContent + ": ");
+                    } else if (node.tagName === 'P' && node.textContent !== null && node.textContent !== undefined) {
+                        //content
+                        chimeCCTextArray.push(node.textContent);
+                    }
+                });
             }
             else if (mutation.type === 'characterData') {
                 const oldValue = mutation.oldValue;
