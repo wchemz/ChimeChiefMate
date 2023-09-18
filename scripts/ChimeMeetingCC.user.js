@@ -153,10 +153,10 @@
         for (let mutation of mutations) {
             if (mutation.type === 'childList') {
                 mutation.addedNodes.forEach(node => {
-                    if (node.tagName === 'DIV' && node.textContent !== null && node.textContent !== undefined) {
+                    if (node.tagName === 'DIV') {
                         //speaker
                         chimeCCTextArray.push(node.textContent + ": ");
-                    } else if (node.tagName === 'P' && node.textContent !== null && node.textContent !== undefined) {
+                    } else if (node.tagName === 'P') {
                         //content
                         chimeCCTextArray.push(node.textContent);
                     }
