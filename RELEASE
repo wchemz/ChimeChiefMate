@@ -1,5 +1,8 @@
+2.1.0
+- Enhanced backend functionality to accommodate token breakdown for inputs exceeding model capacity.
+
 2.0.1
-- Update saved text file structure
+- Enhanced saved text file structure for improved readability and performance.
 
 2.0.0
 - Refreshed GUI with SVG implementation for the save button
