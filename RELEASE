@@ -1,3 +1,6 @@
+2.2.0
+- Enhanced MutationObserver logic
+
 2.1.0
 - Enhanced backend functionality to accommodate token breakdown for inputs exceeding model capacity.
 
@@ -8,4 +11,3 @@
 - Refreshed GUI with SVG implementation for the save button
 - Implemented session store for preserving temporary caption data
 - Enhanced caption update process logic
-

@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Chime Chief Mate
 // @namespace    wchemz
-// @version      2.1.0
+// @version      2.2.0
 // @description  Save Chime CC to disk, this script is going to enable machine generated caption by default
 // @author       Wei Chen <wchemz@amazon.com>
 // @match        https://app.chime.aws/meetings/*
@@ -133,7 +133,7 @@
     function loadFromSessionStorage() {
         const tabUrl = window.location.href;
         const meetingNumber = tabUrl.substring(tabUrl.lastIndexOf('/') + 1);
-        const storageKey = meetingNumber + '-chimeCCTextArray';
+        const storageKey = meetingNumber + '-CCMTextArray';
         var storedData = sessionStorage.getItem(storageKey);
         if (storedData) {
             chimeCCTextArray = JSON.parse(storedData);
@@ -144,7 +144,7 @@
     function saveToSessionStorage() {
         const tabUrl = window.location.href;
         const meetingNumber = tabUrl.substring(tabUrl.lastIndexOf('/') + 1);
-        const storageKey = meetingNumber + '-chimeCCTextArray';
+        const storageKey = meetingNumber + '-CCMTextArray';
         sessionStorage.setItem(storageKey, JSON.stringify(chimeCCTextArray));
     }
 
@@ -167,6 +167,7 @@
                         chimeCCTextArray.push(node.textContent);
                     }
                 });
+                mutationCallbackInvoked = true;
             }
             else if (mutation.type === 'characterData') {
                 const oldValue = mutation.oldValue;
@@ -177,27 +178,36 @@
                         chimeCCTextArray[i] = newValue;
                     }
                 }
+                mutationCallbackInvoked = true;
             }
             saveToSessionStorage();
         }
     }
 
+    let observer;
+    let mutationCallbackInvoked = false;
+
     function setupMutationObserver() {
         console.log("Setting up MutationObserver...");
         const ccDivElementWrapper = document.querySelector('div[style="color: rgb(255, 255, 255); font-size: 16px;"]');
         if (ccDivElementWrapper) {
-            console.log("ccDivElementWrapper found. Setting up observer.");
             let ccDivElement = ccDivElementWrapper.firstElementChild;
-            const config = {
-                childList: true,
-                subtree: true,
-                characterData: true,
-                characterDataOldValue: true
+            if (ccDivElement) {
+                console.log("ccDivElement found. Setting up observer.");
+                const config = {
+                    childList: true,
+                    subtree: true,
+                    characterData: true,
+                    characterDataOldValue: true
+                }
+                observer = new MutationObserver(mutationCallback);
+                observer.observe(ccDivElement, config);
+            } else {
+                console.log("ccDivElement is null.");
+                setTimeout(setupMutationObserver, 2000); // Retry after 2s if not found
             }
-            let observer = new MutationObserver(mutationCallback);
-            observer.observe(ccDivElement, config);
         } else {
-            console.log("ccDivElement not found. Retrying after 2s.");
+            console.log("ccDivElementWrapper not found. Retrying after 2s.");
             setTimeout(setupMutationObserver, 2000); // Retry after 2s if not found
         }
     }
@@ -228,6 +238,22 @@
         if (!offlineMode) {
             genAi(contentWithLineBreaks);
         }
+    }
+
+    function checkMutationCallback() {
+        if (!mutationCallbackInvoked) {
+            console.log("mutationCallback has not been invoked. Re-setting up observer.");
+            let mutations = observer.takeRecords();
+            observer.disconnect();
+            if (mutations.length > 0) {
+                callback(mutations);
+            }
+            setupMutationObserver();
+        } else {
+            mutationCallbackInvoked = false; // Reset the flag for the next check
+            console.log("mutationCallback has been invoked. Re-setting mutationCallbackInvoked to false.");
+        }
+        setTimeout(checkMutationCallback, 10000); // Check every 10 seconds
     }
 
     function saveAs(filename, contents) {
@@ -331,6 +357,7 @@
         addEventListener('beforeunload', saveChimeCCTextArray);
     }
 
-    setupMutationObserver(); // Start the setup on script load
+    setupMutationObserver();
+    setTimeout(checkMutationCallback, 60000);
 
 })();
