@@ -246,7 +246,7 @@
             let mutations = observer.takeRecords();
             observer.disconnect();
             if (mutations.length > 0) {
-                callback(mutations);
+                mutationCallback(mutations);
             }
             setupMutationObserver();
         } else {
