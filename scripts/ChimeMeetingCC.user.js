@@ -189,7 +189,7 @@
 
     function setupMutationObserver() {
         console.log("Setting up MutationObserver...");
-        const ccDivElementWrapper = document.querySelector('div[style^="color: rgb("][style*="font-size: 16px;"]');
+        const ccDivElementWrapper = document.querySelector('div[style^="color: rgb("][style*="font-size:"]');
         if (ccDivElementWrapper) {
             let ccDivElement = ccDivElementWrapper.firstElementChild;
             if (ccDivElement) {
