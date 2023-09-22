@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Chime Chief Mate
 // @namespace    wchemz
-// @version      2.2.0
+// @version      2.2.1
 // @description  Save Chime CC to disk, this script is going to enable machine generated caption by default
 // @author       Wei Chen <wchemz@amazon.com>
 // @match        https://app.chime.aws/meetings/*
@@ -189,7 +189,7 @@
 
     function setupMutationObserver() {
         console.log("Setting up MutationObserver...");
-        const ccDivElementWrapper = document.querySelector('div[style="color: rgb(255, 255, 255); font-size: 16px;"]');
+        const ccDivElementWrapper = document.querySelector('div[style^="color: rgb("][style*="font-size: 16px;"]');
         if (ccDivElementWrapper) {
             let ccDivElement = ccDivElementWrapper.firstElementChild;
             if (ccDivElement) {
