@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Chime Chief Mate
 // @namespace    wchemz
-// @version      2.2.1
+// @version      2.2.2
 // @description  Save Chime CC to disk, this script is going to enable machine generated caption by default
 // @author       Wei Chen <wchemz@amazon.com>
 // @match        https://app.chime.aws/meetings/*
@@ -162,9 +162,11 @@
                     if (node.tagName === 'DIV') {
                         //speaker
                         chimeCCTextArray.push(node.textContent + ": ");
+                        console.log("speaker: " + node.textContent);
                     } else if (node.tagName === 'P') {
                         //content
                         chimeCCTextArray.push(node.textContent);
+                        // console.log("textContent: " + node.textContent);
                     }
                 });
                 mutationCallbackInvoked = true;
@@ -172,10 +174,12 @@
             else if (mutation.type === 'characterData') {
                 const oldValue = mutation.oldValue;
                 const newValue = mutation.target.textContent;
-                const startIndex = Math.max(0, chimeCCTextArray.length - 50);
+                const startIndex = Math.max(0, chimeCCTextArray.length - 1000);
                 for (let i = chimeCCTextArray.length - 1; i >= startIndex; i--) {
                     if (chimeCCTextArray[i] === oldValue) {
                         chimeCCTextArray[i] = newValue;
+                        // console.log("oldValue: " + oldValue);
+                        // console.log("newValue: " + newValue);
                     }
                 }
                 mutationCallbackInvoked = true;
@@ -224,15 +228,19 @@
         console.debug("Starting saving");
         const currentTimeFormatted = getCurrentTimeFormatted();
         const fileName = `${meetingId}_${currentTimeFormatted}.txt`;
-
         let contentWithLineBreaks = '';
+        let uniqueArray = new Set();
+        let lineContent = "";
         for (let i = 0; i < chimeCCTextArray.length; i++) {
             if (i % 2 != 0) {
-                contentWithLineBreaks += chimeCCTextArray[i] + '\n';
+                lineContent += chimeCCTextArray[i] + '\n';
+                uniqueArray.add(lineContent);
             } else {
-                contentWithLineBreaks += chimeCCTextArray[i];
+                lineContent = "";
+                lineContent += chimeCCTextArray[i];
             }
         }
+        contentWithLineBreaks = Array.from(uniqueArray).join('');
         contentWithLineBreaks = contentWithLineBreaks.slice(0, -1);
         saveAs(meetingId + "_" + currentTimeFormatted + ".txt", contentWithLineBreaks);
         if (!offlineMode) {
